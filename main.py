@@ -1,171 +1,266 @@
-from tkinter import *
-from math import *
+
 import pygame
-# import pymysql
-import socket as sock
-import pickle
-import ctypes
+import sys
 
-
-#=============================================> mysql <==========================================================#
-# mysql = pymysql.connect(
-#     user='asc07',
-#     passwd='anchorong',
-#     host='18.220.144.38',
-#     db='chorong'
-# )
-
-# cursor = mysql.cursor(pymysql.cursors.DictCursor)
-
-# mysql_command = "select score from ball_game where ID = \"admin\";"
-# cursor.execute(mysql_command)
-# ball_game_member_information = (str((cursor.fetchall())[0]))
-
-
-
-class database_mysql:
-    def __init__(self,member_ID):
-        pass
-
-    def join(ID):
-        pass
-
-    def select(ID):
-        pass
-
-        
-
-
-
-
-
-# print(int(ball_game_member_information[10:int(len(ball_game_member_information)) - 1]))
-
-# print(ball_game_member_information)
-
-#================================================================================================================#
-
-
-#=================================================> GUI <========================================================#
-class member_ball_game:
-    def __init__(self,ID):
-        self.ID = ID
-        self.PASSWD = 0
-        self.join_running = True
-    
-    def join(self):
-        
-        
-        self.root = Tk()
-        self.root.title("anchorong")
-        self.root.geometry("450x60")
-        self.root.resizable(False,False)
-
-        ID_label = Label(self.root,text="ID ")
-        PASSWD_label = Label(self.root,text="PASSWD ")
-        ID_label.pack()
-        ID_label.place(x=0 , y=2)
-        PASSWD_label.pack()
-        PASSWD_label.place(x=0,y=30)
-        
-        exit_button = Button(self.root,text="E X I T ",command=self.EXIT)
-        exit_button.pack()
-        exit_button.place(x=380,y=30)
-        
-        login_button = Button(self.root,text="J O I N")
-        login_button.pack()
-        login_button.place(x=380,y=2)
-
-        
-
-        ID_text_box = Entry(self.root,width=40)
-        PASSWD_text_box = Entry(self.root,width=40)
-        ID_text_box.pack()
-        ID_text_box.place(x=80,y=2)
-        PASSWD_text_box.pack()
-        PASSWD_text_box.place(x=80,y=30)
-        self.root.mainloop()
-        
-
-    def EXIT(self):
-        self.root.destroy()
-    
-    def join_button_command(self):
-        pass
-
-#================================================================================================================#
-
-
-
+# ì°½ ë§Œë“¤ê¸°
 pygame.init()
+WINDOW_WIDTH = 600
+WINDOW_HEIGHT = 800
+window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+pygame.display.set_caption('Tetris')
+PLAYING_FIELD_WIDTH = 10
+PLAYING_FIELD_HEIGHT = 20
+BLOCK_SIZE = 30
+playing_field = [[0] * PLAYING_FIELD_WIDTH for _ in range(PLAYING_FIELD_HEIGHT)]
+
+shapes = [
+    [[1, 1, 1],
+     [0, 1, 0]],
+
+    [[0, 2, 2],
+     [2, 2, 0]],
+
+    [[3, 3, 0],
+     [0, 3, 3]],
+
+    [[4, 0, 0],
+     [4, 4, 4]],
+
+    [[0, 0, 5],
+     [5, 5, 5]],
+
+    [[6, 6],
+     [6, 6]]
+]
+
+# í…ŒíŠ¸ë¦¬ìŠ¤ ë¸”ëŸ­ íƒ€ìž…
+
+I_BLOCK = [
+    [[0, 1, 0, 0],
+     [0, 1, 0, 0],
+     [0, 1, 0, 0],
+     [0, 1, 0, 0]],
+
+    [[0, 0, 0, 0],
+     [1, 1, 1, 1],
+     [0, 0, 0, 0],
+     [0, 0, 0, 0]],
+
+    [[0, 0, 1, 0],
+     [0, 0, 1, 0],
+     [0, 0, 1, 0],
+     [0, 0, 1, 0]],
+
+    [[0, 0, 0, 0],
+     [0, 0, 0, 0],
+     [1, 1, 1, 1],
+     [0, 0, 0, 0]]
+]
+
+L1_BLOCK = [
+    [[1, 0, 0],
+     [1, 1, 1],
+     [0, 0, 0]],
+
+    [[0, 1, 1],
+     [0, 1, 0],
+     [0, 1, 0]],
+
+    [[0, 0, 0],
+     [1, 1, 1],
+     [0, 0, 1]],
+
+    [[0, 1, 0],
+     [0, 1, 0],
+     [1, 1, 0]]
+]
+
+L2_BLOCK = [
+    [[0, 0, 1],
+     [1, 1, 1],
+     [0, 0, 0]],
+
+    [[0, 1, 0],
+     [0, 1, 0],
+     [0, 1, 1]],
+
+    [[0, 0, 0],
+     [1, 1, 1],
+     [1, 0, 0]],
+
+    [[1, 1, 0],
+     [0, 1, 0],
+     [0, 1, 0]]
+
+
+T_BLOCK = [
+    [[0, 1, 0],
+     [1, 1, 1],
+     [0, 0, 0]],
+
+    [[0, 1, 0],
+     [0, 1, 1],
+     [0, 1, 0]],
+
+    [[0, 0, 0],
+     [1, 1, 1],
+     [0, 1, 0]],
+
+    [[0, 1, 0],
+     [1, 1, 0],
+     [0, 1, 0]]
+]
+
+O_BLOCK = [
+    [[1, 1],
+     [1, 1]],
+
+    [[1, 1],
+     [1, 1]],
+
+    [[1, 1],
+     [1, 1]],
+
+    [[1, 1],
+     [1, 1]]
+]
+
+Z1_BLOCK = [
+    [[0, 1, 1],
+     [1, 1, 0],
+     [0, 0, 0]],
+
+    [[0, 1, 0],
+     [0, 1, 1],
+     [0, 0, 1]],
+
+    [[0, 0, 0],
+     [0, 1, 1],
+     [1, 1, 0]],
+
+    [[1, 0, 0],
+     [1, 1, 0],
+     [0, 1, 0]]
+]
+
+Z2_BLOCK = [
+    [[1, 1, 0],
+     [0, 1, 1],
+     [0, 0, 0]],
+
+    [[0, 0, 1],
+     [0, 1, 1],
+     [0, 1, 0]],
+
+    [[0, 0, 0],
+     [1, 1, 0],
+     [0, 1, 1]],
+
+    [[0, 1, 0],
+     [1, 1, 0],
+     [1, 0, 0]]
+]
 
 
 
 
-screen_width = 480 * 1
-screen_height = 720
+# I_BLOCK ê·¸ë¦¬ê¸° í•¨ìˆ˜
 
-clock = pygame.time.Clock()
+def draw_I_block (x, y, n)
+    #ë¸”ë¡ ìƒ‰ìƒ 
+    color = (0, 255, 255)
+    #ë¸”ë¡ ìž…ë ¥
+    for i in range(4):
+        for j in range(4):
+            if I_block[n][x][y]:
+                rect = pygame.rect(x+j*20, y+i*20, 20, 20)
+
+def draw_O_block (x, y, n)
+    #ë¸”ë¡ ìƒ‰ìƒ 
+    color = (0, 255, 255)
+    #ë¸”ë¡ ìž…ë ¥
+    for i in range(4):
+        for j in range(4):
+            if I_block[n][x][y]:
+                rect = pygame.rect(x+j*20, y+i*20, 20, 20)
+
+def draw_I_block (x, y, n)
+    #ë¸”ë¡ ìƒ‰ìƒ 
+    color = (0, 255, 255)
+    #ë¸”ë¡ ìž…ë ¥
+    for i in range():
+        for j in range():
+            if I_block[n][x][y]:
+                rect = pygame.rect(x+j*20, y+i*20, 20, 20)
+
+def draw_I_block (x, y, n)
+    #ë¸”ë¡ ìƒ‰ìƒ 
+    color = (0, 255, 255)
+    #ë¸”ë¡ ìž…ë ¥
+    for i in range(4):
+        for j in range(4):
+            if I_block[n][x][y]:
+                rect = pygame.rect(x+j*20, y+i*20, 20, 20)
+
+def draw_I_block (x, y, n)
+    #ë¸”ë¡ ìƒ‰ìƒ 
+    color = (0, 255, 255)
+    #ë¸”ë¡ ìž…ë ¥
+    for i in range(4):
+        for j in range(4):
+            if I_block[n][x][y]:
+                rect = pygame.rect(x+j*20, y+i*20, 20, 20)
+
+def draw_I_block (x, y, n)
+    #ë¸”ë¡ ìƒ‰ìƒ 
+    color = (0, 255, 255)
+    #ë¸”ë¡ ìž…ë ¥
+    for i in range(4):
+        for j in range(4):
+            if I_block[n][x][y]:
+                rect = pygame.rect(x+j*20, y+i*20, 20, 20)
+
+def draw_I_block (x, y, n)
+    #ë¸”ë¡ ìƒ‰ìƒ 
+    color = (0, 255, 255)
+    #ë¸”ë¡ ìž…ë ¥
+    for i in range(4):
+        for j in range(4):
+            if I_block[n][x][y]:
+                rect = pygame.rect(x+j*20, y+i*20, 20, 20)
+
+def draw_I_block (x, y, n)
+    #ë¸”ë¡ ìƒ‰ìƒ 
+    color = (0, 255, 255)
+    #ë¸”ë¡ ìž…ë ¥
+    for i in range(4):
+        for j in range(4):
+            if I_block[n][x][y]:
+                rect = pygame.rect(x+j*20, y+i*20, 20, 20)
 
 
-#====================> console settings <====================#
-screen = pygame.display.set_mode((screen_width,screen_height))
-pygame.display.set_caption("tetris")
-#============================================================#
-
-class image_file_load:
-    def __init__(self,file_address):
-        self.file_address = file_address
-        self.character = pygame.image.load(self.file_address)
-        self.character_size = self.character.get_rect().size # ?´ë¯¸ì???˜ ?‚¬?´ì¦ˆë?? êµ¬í•´?˜¨?‹¤
-        self.character_width = self.character_size[0] # ìºë¦­?„°?˜ ê°?ë¡? ?¬ê¸?
-        self.character_height = self.character_size[1] # ìºë¦­?„°?˜ ?„¸ë¡? ?¬ë¦?
-        self.character_x_pos = 0  # = (screen_width / 2 ) - (self.character_width / 2) # ?™”ë©? ê°?ë¡œì˜ ?¬ê¸°ì— ?•´?‹¹?•˜?Š” ê³³ì— ?œ„ì¹? (ê°?ë¡?)
-        self.character_y_pos  = 0 # = screen_height - self.character_height # ?™”ë©? ?„¸ë¡? ?¬ê¸? ê°??ž¥ ?•„?ž˜?— (?„¸ë¡?)
 
 
 
-class game_play:
-    def __init__(self):
-        self.running = True
-        self.to_x = 0
-        self.to_y = 0
-        background = image_file_load("image/background.png")
-        block_1 = image_file_load("image/block_1.png")
-        block_1.character_y_pos = 300
-        
-        
-        while self.running:
-            dt = clock.tick(300)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_e:
-                        exit()
-                    if event.key == pygame.K_j:
-                        member_ball_game("ID").join() 
 
-                    if event.key == pygame.K_LEFT:
-                        block_1.character_x_pos -= 1
-                    elif event.key == pygame.K_RIGHT:
-                        block_1.character_x_pos += 1
-
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                        self.to_x = 0
-
-                        
-                        
-            block_1.character_x_pos += self.to_x * dt / 2
-            block_1.character_y_pos += self.to_y * dt / 2
-            screen.blit(background.character,(background.character_x_pos,background.character_y_pos))
-            screen.blit(block_1.character,(block_1.character_x_pos,block_1.character_y_pos))
-            pygame.display.update()
-    
-    def crush_check(self):
-        pass
+)
 
 
-start = game_play()
+# ê²Œìž„ ë£¨í”„
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    # í™”ë©´ í´ë¦¬ì–´
+    window.fill((0, 0, 0))
+    pygame.draw.rect(window, (255, 255, 255), (0, 0, PLAYING_FIELD_WIDTH * BLOCK_SIZE, PLAYING_FIELD_HEIGHT * BLOCK_SIZE), 5)
+
+    # I_BLOCK ê·¸ë¦¬ê¸°
+    draw_I_block(100, 100, 0)
+
+
+
+    # í™”ë©´ ì—…ë°ì´íŠ¸
+    pygame.display.update()
