@@ -5,7 +5,6 @@ import time
 
 # Pygame 초기화
 
-
 I_BLOCK = [
     [[0, 1, 0, 0],
      [0, 1, 0, 0],
@@ -153,7 +152,7 @@ C_MINT = (9,247,164)
 C_P = (176,18,237)
 C_B = (0,128,255)
 
-COLOR_TYPE = [C_RED]
+COLOR_TYPE = [C_RED,C_MINT,C_P,C_B]
 
 # I_BLOCK 그리기 함수
 def draw_block(x, y, block_direction,Block,Color):
@@ -168,9 +167,10 @@ def draw_block(x, y, block_direction,Block,Color):
 
 def draw_block_(rect,Color):
     for i in range(len(rect)):
-        print('test')
+
         pygame.draw.rect(screen,Color,rect[i])
     
+
 def Get_draw_block(x, y, block_direction,Block,Color):
     RectArray = []
     for i in range(len(Block[block_direction])):
@@ -191,16 +191,14 @@ def block_color():
          if B_color == i:
             return color_[i]
 
+
+
 def CheckBlockTypeNum(BlockTypeNum):
     v1_ = [I_BLOCK,L1_BLOCK,L2_BLOCK,T_BLOCK,O_BLOCK,Z1_BLOCK,Z2_BLOCK] # 7개 요소
     for i in range(len(v1_)):
          if BlockTypeNum == i:
-            return v1_[i]COLOR_TYPE[0]
+            return v1_[i]
          
-
-# def EmptyLineCheck(Block,Direction):
-#     for i in range(len(Block[Direction])):
-#         for j in range(len(Block[Direction][i])):
             
 
 
@@ -210,7 +208,17 @@ B_type = 0
 B_direction = 0
 
 BlockDownSpeed = 0
-KeyBoardDownSpeed = 0
+
+Block_EXIST = []
+for i in range(PLAYING_FIELD_WIDTH):
+    Block_EXIST.append([])
+    for j in range(PLAYING_FIELD_HEIGHT):
+        Block_EXIST[i].append([])
+        Block_EXIST[i][j] = 0
+
+
+
+# KeyBoardDownSpeed = 0
 
 KBDS = 1
 
@@ -229,22 +237,16 @@ while True:
         
         if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    if KeyBoardDownSpeed > KBDS:
                         Block_X_Position -= 1
-                        KeyBoardDownSpeed = 0
+                        
                 elif event.key == pygame.K_RIGHT:
-                    if KeyBoardDownSpeed > KBDS:
                         Block_X_Position += 1
-                        KeyBoardDownSpeed = 0
                 elif event.key == pygame.K_DOWN:
-                    if KeyBoardDownSpeed > KBDS:
                         Block_Y_INC += 1
-                        KeyBoardDownSpeed = 0
-                elif event.key == pygame.K_UP:
-                    if KeyBoardDownSpeed > KBDS:
+                        
+                elif event.key == pygame.K_r:
                         B_direction += 1
-                        # Block_Y_INC -= 1
-                        KeyBoardDownSpeed = 0
+                    
                 if event.key == pygame.K_g:
                     Block_State = True
                 
@@ -252,22 +254,17 @@ while True:
                     pygame.quit()
                     sys.exit()
 
-    if KeyBoardDownSpeed > 1000:
-        KeyBoardDownSpeed = 0
-
-    KeyBoardDownSpeed += 1
-
     #Wall Cheching
     if Block_X_Position < 0:
         Block_X_Position = 0
 
     if Block_Y_INC > 29:
         Block_Y_INC = 29
-        Block_Stack.append(Get_draw_block(LINE_SIZE_X + BLOCK_SIZE * Block_X_Position , LINE_SIZE_Y + BLOCK_SIZE * (Block_Y_INC), B_direction , CheckBlockTypeNum(B_type),B_color))
+        # Block_Stack.append(Get_draw_block(LINE_SIZE_X + BLOCK_SIZE * Block_X_Position , LINE_SIZE_Y + BLOCK_SIZE * (Block_Y_INC), B_direction , CheckBlockTypeNum(B_type),B_color))
         Block_State = True
 
-    for i in range(len(Block_Stack)):
-        draw_block_(Block_Stack[i],COLOR_TYPE[0])
+    # for i in range(len(Block_Stack)):
+    #     draw_block_(Block_Stack[i],COLOR_TYPE[0])
 
 
 
@@ -291,9 +288,9 @@ while True:
         B_direction -= 4
 
     BlockDownSpeed += 1
-    if BlockDownSpeed > 1000:
+    if BlockDownSpeed > 500:
         draw_block(LINE_SIZE_X + BLOCK_SIZE * Block_X_Position , LINE_SIZE_Y + BLOCK_SIZE * (Block_Y_INC), B_direction , CheckBlockTypeNum(B_type),B_color)
-        Block_Y_INC += 1COLOR_TYPE[0]
+        Block_Y_INC += 1
         BlockDownSpeed = 0
     
     draw_block(LINE_SIZE_X + BLOCK_SIZE * Block_X_Position , LINE_SIZE_Y + BLOCK_SIZE * (Block_Y_INC), B_direction , CheckBlockTypeNum(B_type),B_color)
