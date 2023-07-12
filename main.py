@@ -3,7 +3,7 @@ import pygame
 import sys
 import random
 import time
-# Pygame √ ±‚»≠
+# Pygame Ï¥àÍ∏∞Ìôî
 
 I_BLOCK = [
     [[0, 1, 0, 0],
@@ -133,7 +133,7 @@ Z2_BLOCK = [
      [1, 0, 0]]
 ]
 
-# ∞‘¿”√¢ ∏∏µÈ±‚
+# Í≤åÏûÑÏ∞Ω ÎßåÎì§Í∏∞
 pygame.init()
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 900
@@ -190,7 +190,7 @@ def RandomBlockColor():
             return color_[i]
          
 def CheckBlockTypeAsNum(BlockTypeNum):
-    v1_ = [I_BLOCK,L1_BLOCK,L2_BLOCK,T_BLOCK,O_BLOCK,Z1_BLOCK,Z2_BLOCK] # 7∞≥ ø‰º“
+    v1_ = [I_BLOCK,L1_BLOCK,L2_BLOCK,T_BLOCK,O_BLOCK,Z1_BLOCK,Z2_BLOCK] # 7Í∞ú ÏöîÏÜå
     for i in range(len(v1_)):
          if BlockTypeNum == i:
             return v1_[i]         
@@ -412,7 +412,7 @@ while True:
     
 
 
-    #»≠∏È √ ±‚»≠
+    #ÌôîÎ©¥ Ï¥àÍ∏∞Ìôî
     screen.fill((0, 0, 0))
 
 
@@ -433,13 +433,13 @@ while True:
     # BlockChain.UpdateMainCmArr()
     # DrawBlocks()
     NewBlock.Draw()
-    DrawBlocks()
-    # BlockChain.DrawAll()
+    #DrawBlocks()
+    BlockChain.DrawAll()
     # NewBlock.Draw()
     
 
 
-    # »≠∏È æ˜µ•¿Ã∆Æ
+    # ÌôîÎ©¥ ÏóÖÎç∞Ïù¥Ìä∏
     pygame.display.update()
 
     
